@@ -23,6 +23,9 @@ namespace MyDVLD_PeresentationTier.Drivers
             _dtAllDrivers = clsDriversManagement.GetAllDrivers();
             dgvDriverManagment.DataSource = _dtAllDrivers;
 
+            if (dgvDriverManagment.RowCount < 1)
+                return;
+
             dgvDriverManagment.Columns[0].HeaderText = "Driver ID";
             dgvDriverManagment.Columns[0].Width = 90;
 
@@ -71,6 +74,9 @@ namespace MyDVLD_PeresentationTier.Drivers
 
         private void tbFillterValue_TextChanged(object sender, EventArgs e)
         {
+            if (dgvDriverManagment.RowCount < 1)
+                return;
+
             string FilterColumn = "";
 
             switch (cbFillterOptions.Text)

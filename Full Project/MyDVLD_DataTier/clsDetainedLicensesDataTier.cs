@@ -79,38 +79,33 @@ namespace MyDVLD_BusinessTier
         }
 
 
-        public static bool UpdateDetainedLicense(int DetainLiceneID , DateTime DetainDate, float FineFees, int CreatedByUserID,
-            bool IsReleased, DateTime ReleaseDate, int ReleasedByUserID, int ReleaseAppID)
+        public static bool UpdateDetainedLicense(int DetainLiceneID, DateTime DetainDate, float FineFees, int CreatedByUserID,
+           bool IsReleased, DateTime ReleaseDate, int ReleasedByUserID, int ReleaseAppID)
         {
             bool updated = false;
 
-            string q = @"UPDATE DetainedLicenses SET
-                            DetainDate = @DetainDate,
-                            FineFees = @FineFees,
-                            CreatedByUserID = @CreatedByUserID,
-                            IsReleased = @IsReleased,
-                            ReleaseDate = @ReleaseDate,
-                            ReleasedByUserID = @ReleasedByUserID,
-                            ReleaseApplicationID = @ReleaseAppID
-                         WHERE DetainID = @DetainLicenseID;";
-
-            SqlConnection con = new SqlConnection(clsDB_Util.ConnectionString);
-
-            SqlCommand cmd = new SqlCommand(q, con);
-            cmd.Parameters.AddWithValue("@DetainLicenseID", DetainLiceneID);
-            cmd.Parameters.AddWithValue("@DetainDate", DetainDate);
-            cmd.Parameters.AddWithValue("@FineFees", FineFees);
-            cmd.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
-            cmd.Parameters.AddWithValue("@IsReleased", IsReleased);
-
-            cmd.Parameters.AddWithValue("@ReleaseAppID", ReleaseAppID == -1 ? (object)DBNull.Value : ReleaseAppID);
-            cmd.Parameters.AddWithValue("@ReleasedByUserID", ReleasedByUserID == -1 ? (object)DBNull.Value : ReleasedByUserID);
-            cmd.Parameters.AddWithValue("@ReleaseDate", ReleaseDate == null ? (object)DBNull.Value : ReleaseDate);
-
             try
             {
-                con.Open();
-                updated = cmd.ExecuteNonQuery() > 0;
+                using (SqlConnection con = new SqlConnection(clsDB_Util.ConnectionString))
+                {
+                    con.Open();
+
+                    using (SqlCommand cmd = new SqlCommand("SP_UpdateDetainedLicense", con))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@DetainLicenseID", DetainLiceneID);
+                        cmd.Parameters.AddWithValue("@DetainDate", DetainDate);
+                        cmd.Parameters.AddWithValue("@FineFees", FineFees);
+                        cmd.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
+                        cmd.Parameters.AddWithValue("@IsReleased", IsReleased);
+                        cmd.Parameters.AddWithValue("@ReleaseAppID", ReleaseAppID == -1 ? (object)DBNull.Value : ReleaseAppID);
+                        cmd.Parameters.AddWithValue("@ReleasedByUserID", ReleasedByUserID == -1 ? (object)DBNull.Value : ReleasedByUserID);
+                        cmd.Parameters.AddWithValue("@ReleaseDate", ReleaseDate == default(DateTime) ? (object)DBNull.Value : ReleaseDate);
+
+                        updated = cmd.ExecuteNonQuery() > 0;
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -120,7 +115,6 @@ namespace MyDVLD_BusinessTier
 
             return updated;
         }
-
 
         public static DataTable GetAllDetainedLicenses()
         {

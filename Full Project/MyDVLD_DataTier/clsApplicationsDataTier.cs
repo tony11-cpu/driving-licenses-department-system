@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -84,36 +85,41 @@ namespace MyDVLD_DataTier
         }
 
         public static int AddNewApplicationToDB(int ApplicantPersonID, DateTime ApplicationDate, int ApplicationTypeID,
-                                               short ApplicationStatus, DateTime LastStatusDate, float PaidFees, int CreatedByUserID) 
-        { 
+                                         short ApplicationStatus, DateTime LastStatusDate, float PaidFees, int CreatedByUserID)
+        {
             int NewAppID = -1;
-            string Query = @"Insert Into Applications(ApplicantPersonID,ApplicationDate ,ApplicationTypeID,ApplicationStatus
-                                                     ,LastStatusDate,PaidFees,CreatedByUserID) 
-                             values (@ApplicantPersonID , @ApplicationDate , 
-                                     @ApplicationTypeID ,@ApplicationStatus , @LastStatusDate ,
-                                     @PaidFees , @CreatedByUserID);
-                             Select SCOPE_IDENTITY();";
-            
+
             try
             {
-                using (SqlConnection connection = new SqlConnection(clsDB_Util.ConnectionString)) 
-                { 
+                using (SqlConnection connection = new SqlConnection(clsDB_Util.ConnectionString))
+                {
                     connection.Open();
 
-                    using (SqlCommand cmd = new SqlCommand(Query, connection)) 
-                    { 
-                        cmd.Parameters.AddWithValue("@ApplicantPersonID", ApplicantPersonID); 
-                        cmd.Parameters.AddWithValue("@ApplicationDate", ApplicationDate); 
+                    using (SqlCommand cmd = new SqlCommand("SP_AddNewApplication", connection))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@ApplicantPersonID", ApplicantPersonID);
+                        cmd.Parameters.AddWithValue("@ApplicationDate", ApplicationDate);
                         cmd.Parameters.AddWithValue("@ApplicationTypeID", ApplicationTypeID);
                         cmd.Parameters.AddWithValue("@ApplicationStatus", ApplicationStatus);
                         cmd.Parameters.AddWithValue("@LastStatusDate", LastStatusDate);
                         cmd.Parameters.AddWithValue("@PaidFees", PaidFees);
                         cmd.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
-                        
-                        NewAppID = Convert.ToInt32(cmd.ExecuteScalar().ToString());
-                    } 
-                } 
-            } 
+
+                        SqlParameter OutParam = new SqlParameter("@NewAppID", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+
+                        cmd.Parameters.Add(OutParam);
+                        cmd.ExecuteNonQuery();
+
+                        if (int.TryParse(OutParam.Value.ToString(), out int NewID) && NewID > 0)
+                            NewAppID = NewID;
+                    }
+                }
+            }
             catch (Exception ex)
             {
                 clsDB_Util.clsEventLog.LogEvent(ex.Message, System.Diagnostics.EventLogEntryType.Error);
@@ -123,19 +129,10 @@ namespace MyDVLD_DataTier
         }
 
         public static bool UpdateApplicationInDB(int ApplicationID, int ApplicantPersonID, DateTime ApplicationDate,
-                                                 int ApplicationTypeID, short ApplicationStatus, DateTime LastStatusDate,
-                                                 float PaidFees, int CreatedByUserID)
+                                           int ApplicationTypeID, short ApplicationStatus, DateTime LastStatusDate,
+                                           float PaidFees, int CreatedByUserID)
         {
             bool IsAppUpdated = false;
-            string Query = @"Update Applications 
-                             Set ApplicantPersonID = @NewPersonID,
-                                 ApplicationDate = @NewApplicationDate,
-                                 ApplicationTypeID = @NewApplicationTypeID,
-                                 ApplicationStatus = @NewStatus,
-                                 LastStatusDate = @NewLastStatusDate,
-                                 PaidFees = @NewPaidFees,
-                                 CreatedByUserID = @NewCreatedByUserID
-                             Where ApplicationID = @AppID";
 
             try
             {
@@ -143,8 +140,10 @@ namespace MyDVLD_DataTier
                 {
                     connection.Open();
 
-                    using (SqlCommand cmd = new SqlCommand(Query, connection))
+                    using (SqlCommand cmd = new SqlCommand("SP_UpdateApplication", connection))
                     {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
                         cmd.Parameters.AddWithValue("@AppID", ApplicationID);
                         cmd.Parameters.AddWithValue("@NewPersonID", ApplicantPersonID);
                         cmd.Parameters.AddWithValue("@NewApplicationDate", ApplicationDate);
@@ -154,14 +153,14 @@ namespace MyDVLD_DataTier
                         cmd.Parameters.AddWithValue("@NewPaidFees", PaidFees);
                         cmd.Parameters.AddWithValue("@NewCreatedByUserID", CreatedByUserID);
 
-                        IsAppUpdated = (cmd.ExecuteNonQuery() > 0);
+                        IsAppUpdated = cmd.ExecuteNonQuery() > 0;
                     }
                 }
             }
             catch (Exception ex)
             {
+                IsAppUpdated = false;
                 clsDB_Util.clsEventLog.LogEvent(ex.Message, System.Diagnostics.EventLogEntryType.Error);
-                return false;
             }
 
             return IsAppUpdated;

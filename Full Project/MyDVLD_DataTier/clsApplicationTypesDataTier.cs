@@ -37,13 +37,9 @@ namespace MyDVLD_DataTier
             return tb;
         }
 
-        public static bool UpdateApplicationType(int AppID ,string Title , float Fees)
+        public static bool UpdateApplicationType(int AppID, string Title, float Fees)
         {
             bool IsAppUpdated = false;
-            string Query = @"Update ApplicationTypes
-                             Set ApplicationTypeTitle = @Title,
-                                 ApplicationFees = @Fees
-                                 Where ApplicationTypeID = @AppID;";
 
             try
             {
@@ -51,18 +47,21 @@ namespace MyDVLD_DataTier
                 {
                     connection.Open();
 
-                    using (SqlCommand cmd = new SqlCommand(Query, connection))
+                    using (SqlCommand cmd = new SqlCommand("SP_UpdateApplicationType", connection))
                     {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@AppID", AppID);
                         cmd.Parameters.AddWithValue("@Title", Title);
                         cmd.Parameters.AddWithValue("@Fees", Fees);
-                        cmd.Parameters.AddWithValue("@AppID", AppID);
 
-                        IsAppUpdated = (cmd.ExecuteNonQuery() > 0);
+                        IsAppUpdated = cmd.ExecuteNonQuery() > 0;
                     }
                 }
             }
             catch (Exception ex)
             {
+                IsAppUpdated = false;
                 clsDB_Util.clsEventLog.LogEvent(ex.Message, System.Diagnostics.EventLogEntryType.Error);
             }
 

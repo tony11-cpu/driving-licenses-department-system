@@ -23,6 +23,9 @@ namespace MyDVLD_PeresentationTier
             dgvPeopleManagment.DataSource = clsPeopleManagement.GetAllPeople();
             lblNumberOfPeople.Text = dgvPeopleManagment.Rows.Count.ToString();
 
+            if (dgvPeopleManagment.RowCount < 1)
+                return;
+
             dgvPeopleManagment.Columns[0].HeaderText = "Person ID";
             dgvPeopleManagment.Columns[1].HeaderText = "National No.";
             dgvPeopleManagment.Columns[2].HeaderText = "First Name";

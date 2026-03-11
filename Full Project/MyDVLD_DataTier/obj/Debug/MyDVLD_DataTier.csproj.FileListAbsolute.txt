@@ -1,0 +1,6 @@
+C:\Users\Tonyg\OneDrive\Desktop\Test\DVLD_Full_Project\Full Project\MyDVLD_DataTier\bin\Debug\MyDVLD_DataTier.dll
+C:\Users\Tonyg\OneDrive\Desktop\Test\DVLD_Full_Project\Full Project\MyDVLD_DataTier\bin\Debug\MyDVLD_DataTier.pdb
+C:\Users\Tonyg\OneDrive\Desktop\Test\DVLD_Full_Project\Full Project\MyDVLD_DataTier\obj\Debug\MyDVLD_DataTier.csproj.AssemblyReference.cache
+C:\Users\Tonyg\OneDrive\Desktop\Test\DVLD_Full_Project\Full Project\MyDVLD_DataTier\obj\Debug\MyDVLD_DataTier.csproj.CoreCompileInputs.cache
+C:\Users\Tonyg\OneDrive\Desktop\Test\DVLD_Full_Project\Full Project\MyDVLD_DataTier\obj\Debug\MyDVLD_DataTier.dll
+C:\Users\Tonyg\OneDrive\Desktop\Test\DVLD_Full_Project\Full Project\MyDVLD_DataTier\obj\Debug\MyDVLD_DataTier.pdb

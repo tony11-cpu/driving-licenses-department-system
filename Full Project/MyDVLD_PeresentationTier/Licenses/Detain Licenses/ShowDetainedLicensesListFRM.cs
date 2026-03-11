@@ -24,6 +24,9 @@ namespace MyDVLD_PeresentationTier.Licenses.Detain_Licenses
             _dtAllDetainedLicense = clsDetainedLicensesManagement.GetAllDetainedLicenses();
             dgvDetainedLicensesManagment.DataSource = _dtAllDetainedLicense;
 
+            if (dgvDetainedLicensesManagment.RowCount < 1)
+                return;
+
             dgvDetainedLicensesManagment.Columns[0].HeaderText = "D.ID";
             dgvDetainedLicensesManagment.Columns[0].Width = 90;
 
@@ -115,6 +118,9 @@ namespace MyDVLD_PeresentationTier.Licenses.Detain_Licenses
 
         private void tbFillterValue_TextChanged(object sender, EventArgs e)
         {
+            if(dgvDetainedLicensesManagment.RowCount < 1)
+                return;
+
             string FilterColumn = "";
             switch (cbFillterOptions.Text)
             {
