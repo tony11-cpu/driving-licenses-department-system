@@ -1,7 +1,11 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\Tonyg\\OneDrive\\Desktop\\Test\\DVLD_Full_Project\\Full Project\\MyDVLD_Project0\\",
-  "Documents": [],
+  "WorkspaceRootPath": "C:\\Users\\Tonyg\\OneDrive\\Desktop\\Tests\\DVLD_Full_Project\\Full Project\\MyDVLD_Project0\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{1C6CFA1C-A653-4E7B-91B5-F83FD839ADB3}|..\\MyDVLD_BusinessTier\\MyDVLD_BusinessTier.csproj|c:\\users\\tonyg\\onedrive\\desktop\\tests\\dvld_full_project\\full project\\mydvld_businesstier\\clstestappointmentsmanagement.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,11 +13,24 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{b1e99781-ab81-11d0-b683-00aa00a3ee26}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "clsTestAppointmentsManagement.cs",
+              "DocumentMoniker": "C:\\Users\\Tonyg\\OneDrive\\Desktop\\Tests\\DVLD_Full_Project\\Full Project\\MyDVLD_BusinessTier\\clsTestAppointmentsManagement.cs",
+              "RelativeDocumentMoniker": "..\\MyDVLD_BusinessTier\\clsTestAppointmentsManagement.cs",
+              "ToolTip": "C:\\Users\\Tonyg\\OneDrive\\Desktop\\Tests\\DVLD_Full_Project\\Full Project\\MyDVLD_BusinessTier\\clsTestAppointmentsManagement.cs",
+              "RelativeToolTip": "..\\MyDVLD_BusinessTier\\clsTestAppointmentsManagement.cs",
+              "ViewState": "AgIAAE8AAAAAAAAAAAAEwGMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-11T23:51:59.932Z",
+              "EditorCaption": ""
             }
           ]
         }

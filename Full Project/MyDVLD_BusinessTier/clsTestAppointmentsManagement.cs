@@ -97,7 +97,7 @@ namespace MyDVLD_BusinessTier
                 return new clsTestAppointmentsManagement();
         }
 
-        public static bool IsActiveLocalAppAppointementExists(int LocalDriningLicenseAppID , int TestType) => clsTestAppointmentsDataTier.IsTestAppointemntExistsWithLocalDriningLicenseApplicationID(LocalDriningLicenseAppID, TestType);
+        public static bool IsActiveLocalAppAppointementExists(int LocalDriningLicenseAppID , int TestType) => clsTestAppointmentsDataTier.IsTestAppointmentExistsWithLocalDrivingLicenseApplicationID(LocalDriningLicenseAppID, TestType);
 
         private bool _AddNewAppointments()
         {

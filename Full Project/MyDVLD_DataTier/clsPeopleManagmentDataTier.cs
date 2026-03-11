@@ -8,6 +8,91 @@ namespace MyDVLD_DataTier
 {
     public class clsPeopleManagmentDataTier
     {
+        public static bool IsPersonExistInDB_ById(int PersonId)
+        {
+            bool IsPersonExist = false;
+
+            try
+            {
+                using (SqlConnection Connection = new SqlConnection(clsDB_Util.ConnectionString))
+                {
+                    Connection.Open();
+
+                    using (SqlCommand cmd = new SqlCommand("SP_IsPersonExists", Connection))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        SqlParameter ReturnIsFound = new SqlParameter();
+                        ReturnIsFound.Direction = ParameterDirection.ReturnValue;
+                        cmd.Parameters.Add(ReturnIsFound);
+
+                        cmd.Parameters.AddWithValue("@PersonId", PersonId);
+
+                        cmd.ExecuteNonQuery();
+
+                        IsPersonExist = Convert.ToInt32(ReturnIsFound.Value) == 1;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                clsDB_Util.clsEventLog.LogEvent(ex.Message, System.Diagnostics.EventLogEntryType.Error);
+            }
+
+            return IsPersonExist;
+        }
+
+        public static int AddPersonToDataBase(string NationalNo, string FirstName, string SecondName,
+                                               string ThirdName, string LastName, DateTime DateOfBirth,
+                                               byte Gender, string Address, string Phone, string Email,
+                                               int NationalityCountryId, string ImagePath)
+        {
+            int PersonAddedId = -1;
+
+            try
+            {
+                using (SqlConnection Connection = new SqlConnection(clsDB_Util.ConnectionString))
+                {
+                    Connection.Open();
+
+                    using (SqlCommand cmd = new SqlCommand("SP_AddNewPerson", Connection))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        cmd.Parameters.AddWithValue("@NationalNo", NationalNo);
+                        cmd.Parameters.AddWithValue("@FirstName", FirstName);
+                        cmd.Parameters.AddWithValue("@SecondName", SecondName);
+                        cmd.Parameters.AddWithValue("@LastName", LastName);
+                        cmd.Parameters.AddWithValue("@DateOfBirth", DateOfBirth);
+                        cmd.Parameters.AddWithValue("@Gender", Gender);
+                        cmd.Parameters.AddWithValue("@Address", Address);
+                        cmd.Parameters.AddWithValue("@Phone", Phone);
+                        cmd.Parameters.AddWithValue("@NationalityCountryID", NationalityCountryId);
+                        cmd.Parameters.AddWithValue("@ImagePath", string.IsNullOrEmpty(ImagePath) ? (object)DBNull.Value : ImagePath);
+                        cmd.Parameters.AddWithValue("@Email", string.IsNullOrEmpty(Email) ? (object)DBNull.Value : Email);
+                        cmd.Parameters.AddWithValue("@ThirdName", string.IsNullOrEmpty(ThirdName) ? (object)DBNull.Value : ThirdName);
+
+                        SqlParameter OutParm = new SqlParameter("@NewPersonID", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+
+                        cmd.Parameters.Add(OutParm);
+                        cmd.ExecuteNonQuery();
+
+                        if (OutParm.Value != DBNull.Value && (int)OutParm.Value > 0)
+                            PersonAddedId = (int)OutParm.Value;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                clsDB_Util.clsEventLog.LogEvent(ex.Message, System.Diagnostics.EventLogEntryType.Error);
+            }
+
+            return PersonAddedId;
+        }
+
         public static bool GetPersonInfoById(int PersonId, ref string NationalNo, ref string FirstName, ref string SecondName,
                                          ref string ThirdName, ref string LastName, ref DateTime DateOfBirth,
                                          ref string Gender, ref string Address, ref string Phone, ref string Email,
@@ -146,40 +231,6 @@ namespace MyDVLD_DataTier
             return IsPersonExist;
         }
 
-        public static bool IsPersonExistInDB_ById(int PersonId)
-        {
-            bool IsPersonExist = false;
-
-            try
-            {
-                using (SqlConnection Connection = new SqlConnection(clsDB_Util.ConnectionString))
-                {
-                    Connection.Open();
-
-                    using (SqlCommand cmd = new SqlCommand("SP_IsPersonExists", Connection))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-
-                        SqlParameter ReturnIsFound = new SqlParameter();
-                        ReturnIsFound.Direction = ParameterDirection.ReturnValue;
-
-                        cmd.Parameters.AddWithValue("@PersonId", PersonId);
-                        cmd.Parameters.Add(ReturnIsFound);
-
-                        cmd.ExecuteNonQuery();
-
-                        IsPersonExist = Convert.ToBoolean(ReturnIsFound.Value);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                clsDB_Util.clsEventLog.LogEvent(ex.Message, System.Diagnostics.EventLogEntryType.Error);
-            }
-
-            return IsPersonExist;
-        }
-
         public static bool DeletePersonByIdFromDatabase(int PersonId)
         {
             bool IsPersonDeleted = false;
@@ -215,70 +266,6 @@ namespace MyDVLD_DataTier
             }
 
             return IsPersonDeleted;
-        }
-
-        public static int AddPersonToDataBase(string NationalNo, string FirstName, string SecondName,
-                                               string ThirdName, string LastName, DateTime DateOfBirth,
-                                               byte Gender, string Address, string Phone, string Email,
-                                               int NationalityCountryId, string ImagePath)
-        {
-            int PersonAddedId = -1;
-
-            try
-            {
-                using (SqlConnection Connection = new SqlConnection(clsDB_Util.ConnectionString))
-                {
-                    Connection.Open();
-
-                    using (SqlCommand cmd = new SqlCommand("SP_AddNewPerson", Connection))
-                    {
-                        cmd.CommandType = CommandType.StoredProcedure;
-
-                        cmd.Parameters.AddWithValue("@NationalNo", NationalNo);
-                        cmd.Parameters.AddWithValue("@FirstName", FirstName);
-                        cmd.Parameters.AddWithValue("@SecondName", SecondName);
-                        cmd.Parameters.AddWithValue("@LastName", LastName);
-                        cmd.Parameters.AddWithValue("@DateOfBirth", DateOfBirth);
-                        cmd.Parameters.AddWithValue("@Gender", Gender);
-                        cmd.Parameters.AddWithValue("@Address", Address);
-                        cmd.Parameters.AddWithValue("@Phone", Phone);
-                        cmd.Parameters.AddWithValue("@NationalityCountryID", NationalityCountryId);
-
-                        if (string.IsNullOrEmpty(ImagePath))
-                            cmd.Parameters.AddWithValue("@ImagePath", DBNull.Value);
-                        else
-                            cmd.Parameters.AddWithValue("@ImagePath", ImagePath);
-
-                        if (string.IsNullOrEmpty(Email))
-                            cmd.Parameters.AddWithValue("@Email", DBNull.Value);
-                        else
-                            cmd.Parameters.AddWithValue("@Email", Email);
-
-                        if (string.IsNullOrEmpty(ThirdName))
-                            cmd.Parameters.AddWithValue("@ThirdName", DBNull.Value);
-                        else
-                            cmd.Parameters.AddWithValue("@ThirdName", ThirdName);
-
-                        SqlParameter OutParm = new SqlParameter("@NewPersonID", SqlDbType.BigInt)
-                        {
-                            Direction = ParameterDirection.Output
-                        };
-
-                        cmd.Parameters.Add(OutParm);
-
-                        cmd.ExecuteNonQuery();
-
-                        if (int.TryParse(OutParm.Value.ToString(), out int NewID) && NewID > 0)
-                            PersonAddedId = NewID;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                clsDB_Util.clsEventLog.LogEvent(ex.Message, System.Diagnostics.EventLogEntryType.Error);
-            }
-
-            return PersonAddedId;
         }
 
         public static bool UpdatePersonWithIdInDataBase(int PersonId, string NationalNo, string FirstName, string SecondName,

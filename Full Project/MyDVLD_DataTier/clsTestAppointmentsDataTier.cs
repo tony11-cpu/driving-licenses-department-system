@@ -93,124 +93,132 @@ namespace MyDVLD_DataTier
             return IsTestFound;
         }
 
-        public static bool IsTestAppointemntExistsWithLocalDriningLicenseApplicationID(int LocalDriningLicenseApplication , int TestTypeID)
+        public static bool IsTestAppointmentExistsWithLocalDrivingLicenseApplicationID(int LocalDrivingLicenseApplicationID, int TestTypeID)
         {
             bool IsTestFound = false;
-            string Query = @"Select Found = 1 From TestAppointments 
-                             Where TestAppointments.LocalDrivingLicenseApplicationID = @LocalAppID 
-                             and TestTypeID = @TestTypeID and TestAppointments.IsLocked = 0;";
-
-            SqlConnection connection = new SqlConnection(clsDB_Util.ConnectionString);
-
-            SqlCommand cmd = new SqlCommand(Query, connection);
-            cmd.Parameters.AddWithValue("@LocalAppID" , LocalDriningLicenseApplication);
-            cmd.Parameters.AddWithValue("@TestTypeID", TestTypeID);
 
             try
             {
-                connection.Open();
+                using (SqlConnection connection = new SqlConnection(clsDB_Util.ConnectionString))
+                {
+                    connection.Open();
 
-                using(SqlDataReader reader = cmd.ExecuteReader())
-                    IsTestFound = (reader.HasRows);
+                    using (SqlCommand cmd = new SqlCommand("SP_IsTestAppointmentExistsByLocalDrivingLicenseApplicationID", connection))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
+
+                        SqlParameter returnParam = new SqlParameter();
+                        returnParam.Direction = ParameterDirection.ReturnValue;
+                        cmd.Parameters.Add(returnParam);
+
+                        cmd.Parameters.AddWithValue("@LocalAppID", LocalDrivingLicenseApplicationID);
+                        cmd.Parameters.AddWithValue("@TestTypeID", TestTypeID);
+
+                        cmd.ExecuteNonQuery();
+
+                        IsTestFound = Convert.ToInt32(returnParam.Value) == 1;
+                    }
+                }
             }
             catch (Exception ex)
             {
                 clsDB_Util.clsEventLog.LogEvent(ex.Message, System.Diagnostics.EventLogEntryType.Error);
             }
-            finally { connection.Close(); }
 
             return IsTestFound;
         }
 
-        public static int? AddNewTestAppointmentToTheDataBase(int TestTypeID , int LocalDriningAppID , DateTime AppointmentDate, float PaidFees 
-                                                           , int CreatedByUserID , bool IsLocked , int RetakeTestAppID)
+        public static int? AddNewTestAppointmentToTheDataBase(int TestTypeID, int LocalDrivingAppID, DateTime AppointmentDate,
+                                                       float PaidFees, int CreatedByUserID, bool IsLocked, int RetakeTestAppID)
         {
-            int? IsNewTestAppointmentAdded = null;
-            string Query = @"INSERT INTO [dbo].[TestAppointments]
-                             ([TestTypeID],[LocalDrivingLicenseApplicationID],[AppointmentDate],[PaidFees]
-                             ,[CreatedByUserID],[IsLocked],[RetakeTestApplicationID])
-                              VALUES (@TestTypeID,@LocalDriningAppID,@AppointmentDate,@PaidFees,@CreatedByUserID,@IsLocked,@RetakeTestAppID);
-                              SELECT SCOPE_IDENTITY();";
-
-            SqlConnection connection = new SqlConnection(clsDB_Util.ConnectionString);
-
-            SqlCommand cmd = new SqlCommand(Query, connection);
-            cmd.Parameters.AddWithValue("@TestTypeID", TestTypeID);
-            cmd.Parameters.AddWithValue("@LocalDriningAppID", LocalDriningAppID);
-            cmd.Parameters.AddWithValue("@AppointmentDate", AppointmentDate);
-            cmd.Parameters.AddWithValue("@PaidFees", PaidFees);
-            cmd.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
-            cmd.Parameters.AddWithValue("@IsLocked", IsLocked);
-
-            if (RetakeTestAppID == -1 || RetakeTestAppID == 0)
-                cmd.Parameters.AddWithValue("@RetakeTestAppID", DBNull.Value);
-            else
-                cmd.Parameters.AddWithValue("@RetakeTestAppID", RetakeTestAppID);
+            int? NewTestAppointmentID = null;
 
             try
             {
-                connection.Open();
+                using (SqlConnection connection = new SqlConnection(clsDB_Util.ConnectionString))
+                {
+                    connection.Open();
 
-                object obj = cmd.ExecuteScalar();
+                    using (SqlCommand cmd = new SqlCommand("SP_AddNewTestAppointment", connection))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
 
-                if (obj != null && int.TryParse(obj.ToString(), out int NewTestAppointment))
-                    IsNewTestAppointmentAdded = NewTestAppointment;
+                        cmd.Parameters.AddWithValue("@TestTypeID", TestTypeID);
+                        cmd.Parameters.AddWithValue("@LocalDrivingLicenseApplicationID", LocalDrivingAppID);
+                        cmd.Parameters.AddWithValue("@AppointmentDate", AppointmentDate);
+                        cmd.Parameters.AddWithValue("@PaidFees", PaidFees);
+                        cmd.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
+                        cmd.Parameters.AddWithValue("@IsLocked", IsLocked);
+                        cmd.Parameters.AddWithValue("@RetakeTestApplicationID",
+                            (RetakeTestAppID <= 0) ? (object)DBNull.Value : RetakeTestAppID);
+
+                        SqlParameter outParam = new SqlParameter("@NewTestAppointmentID", SqlDbType.Int)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        cmd.Parameters.Add(outParam);
+
+                        cmd.ExecuteNonQuery();
+
+                        if (outParam.Value != DBNull.Value && (int)outParam.Value > 0)
+                            NewTestAppointmentID = (int)outParam.Value;
+                    }
+                }
             }
             catch (Exception ex)
             {
                 clsDB_Util.clsEventLog.LogEvent(ex.Message, System.Diagnostics.EventLogEntryType.Error);
             }
-            finally { connection.Close(); }
 
-            return IsNewTestAppointmentAdded;
+            return NewTestAppointmentID;
         }
 
-        public static bool UpdateTestAppointmentInDB(int? TestAppointmentsID, int TestTypeID,int LocalDrivingAppID, DateTime AppointmentDate,
-                                                     float PaidFees,int CreatedByUserID,bool IsLocked,int RetakeTestAppID)
+
+        public static bool UpdateTestAppointmentInDB(int? TestAppointmentID, int TestTypeID, int LocalDrivingAppID, DateTime AppointmentDate,
+                                              float PaidFees, int CreatedByUserID, bool IsLocked, int RetakeTestAppID)
         {
-            if (TestAppointmentsID == null)
+            if (TestAppointmentID == null)
                 return false;
 
-            bool isTestAppointmentUpdated = false;
+            bool IsUpdated = false;
 
-            string query = @"UPDATE [dbo].[TestAppointments]
-                             SET [TestTypeID] = @TestTypeID,
-                                 [LocalDrivingLicenseApplicationID] = @LocalDrivingAppID,
-                                 [AppointmentDate] = @AppointmentDate,
-                                 [PaidFees] = @PaidFees,
-                                 [CreatedByUserID] = @CreatedByUserID,
-                                 [IsLocked] = @IsLocked,
-                                 [RetakeTestApplicationID] = @RetakeTestAppID
-                             WHERE [TestAppointmentID] = @TestAppointmentsID;";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(clsDB_Util.ConnectionString))
+                {
+                    connection.Open();
 
-            SqlConnection connection = new SqlConnection(clsDB_Util.ConnectionString);
-            SqlCommand cmd = new SqlCommand(query, connection);
+                    using (SqlCommand cmd = new SqlCommand("SP_UpdateTestAppointment", connection))
+                    {
+                        cmd.CommandType = CommandType.StoredProcedure;
 
-            cmd.Parameters.AddWithValue("@TestAppointmentsID", TestAppointmentsID);
-            cmd.Parameters.AddWithValue("@TestTypeID", TestTypeID);
-            cmd.Parameters.AddWithValue("@LocalDrivingAppID", LocalDrivingAppID);
-            cmd.Parameters.AddWithValue("@AppointmentDate", AppointmentDate);
-            cmd.Parameters.AddWithValue("@PaidFees", PaidFees);
-            cmd.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
-            cmd.Parameters.AddWithValue("@IsLocked", IsLocked);
+                        cmd.Parameters.AddWithValue("@TestAppointmentID", TestAppointmentID.Value);
+                        cmd.Parameters.AddWithValue("@TestTypeID", TestTypeID);
+                        cmd.Parameters.AddWithValue("@LocalDrivingLicenseApplicationID", LocalDrivingAppID);
+                        cmd.Parameters.AddWithValue("@AppointmentDate", AppointmentDate);
+                        cmd.Parameters.AddWithValue("@PaidFees", PaidFees);
+                        cmd.Parameters.AddWithValue("@CreatedByUserID", CreatedByUserID);
+                        cmd.Parameters.AddWithValue("@IsLocked", IsLocked);
+                        cmd.Parameters.AddWithValue("@RetakeTestApplicationID", (RetakeTestAppID <= 0) ? (object)DBNull.Value : RetakeTestAppID);
 
-           if (RetakeTestAppID <= 0)
-                cmd.Parameters.AddWithValue("@RetakeTestAppID", DBNull.Value);
-           else
-                cmd.Parameters.AddWithValue("@RetakeTestAppID", RetakeTestAppID);
+                        SqlParameter outParam = new SqlParameter("@IsUpdated", SqlDbType.Bit)
+                        {
+                            Direction = ParameterDirection.Output
+                        };
+                        cmd.Parameters.Add(outParam);
 
-           try
-           {
-               connection.Open();
-               isTestAppointmentUpdated = cmd.ExecuteNonQuery() > 0;
-           }
-           catch (Exception ex)
-           {
-               clsDB_Util.clsEventLog.LogEvent(ex.Message, System.Diagnostics.EventLogEntryType.Error);
-           }
-           finally { connection.Close(); }
+                        cmd.ExecuteNonQuery();
 
-           return isTestAppointmentUpdated;
+                        IsUpdated = outParam.Value != DBNull.Value && Convert.ToBoolean(outParam.Value);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                clsDB_Util.clsEventLog.LogEvent(ex.Message, System.Diagnostics.EventLogEntryType.Error);
+            }
+
+            return IsUpdated;
         }
     }
 }
