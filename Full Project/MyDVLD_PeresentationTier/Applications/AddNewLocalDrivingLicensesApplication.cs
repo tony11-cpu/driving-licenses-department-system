@@ -93,10 +93,9 @@ namespace MyDVLD_PeresentationTier.Applications
 
         private bool _CheckForPersonAge()
         {
-            clsPeopleManagement person =  clsPeopleManagement.Find(_PersonID);
+            clsPeopleManagement person = clsPeopleManagement.Find(_PersonID);
 
             int age = DateTime.Today.Year - person.DateOfBirth.Year;
-
             if (DateTime.Today < person.DateOfBirth.AddYears(age))
                 age--;
 

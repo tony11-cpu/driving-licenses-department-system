@@ -20,7 +20,6 @@ namespace MyDVLD_PeresentationTier.Users_FRMs
 {
     public partial class LoginToDVLDappFRM : Form
     {
-        // This String Will Contain: USERNAME , PASSWORD , ISACTIVE , PERMISSIONS -> Soon
         private string _UserInfo = null;
 
         private readonly string _RegistaryUserKey = @"HKEY_CURRENT_USER\Software\DVLD1ProjUserLoggedInData";
@@ -112,20 +111,10 @@ namespace MyDVLD_PeresentationTier.Users_FRMs
             if(!_ValidateBeforeLogin()) 
                 return;
 
-            _LogUserData();
             _SaveUserInfo();
 
             MainAppFRM appFRM = new MainAppFRM();
             appFRM.ShowDialog();
-        }
-
-        [Conditional("DEBUG")]
-        private void _LogUserData()
-        {
-            MessageBox.Show($"Logged In Username:  {clsUtil.SignedInUser.Username}" +
-                $"\nLogged In User National No.:  {clsUtil.SignedInUser.PerosnInfo.NationalNo}" +
-                $"\nLogged In User Last Name:  {clsUtil.SignedInUser.PerosnInfo.LastName}",
-                "Debugging Mode.(User Info.)", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         /// <summary>

@@ -1,13 +1,14 @@
 ﻿using MyDVLD_DataTier;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Security.Cryptography;
-using System.Configuration;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using static System.Net.Mime.MediaTypeNames;
@@ -47,30 +48,29 @@ namespace MyDVLD_BusinessTier
         /// </summary>
         /// <param name="Message">Message You Want To Log</param>
         /// <param name="Type">Type Of Event (Error , Warning , Info)</param>
-        public static void LogEvent(string Message, EventLogEntryType Type)
-        {
-            clsDB_Util.clsEventLog.LogEvent(Message, Type);
-        }
-
+        public static void LogEvent(string Message, EventLogEntryType Type) => clsDB_Util.clsEventLog.LogEvent(Message, Type);
 
         /// <summary>
         /// This Class Is Resposible For Security...
         /// </summary>
         public static class clsSecurity
         {
+            private const string HashPrefix = "sha256:";
+
             /// <summary>
             /// Hashes The Password Before Inserting To DataBase (Hashing Is One Way You Cant Retrive Password)
             /// </summary>
             /// <param name="UserPassword">User Password</param>
             /// <returns>256 Byte string Of Hexadecimal Code</returns>
-            public static string HashPassword(string UserPassword)
+            public static string HashPassword(string userPassword)
             {
+                if (userPassword.StartsWith(HashPrefix))
+                    return userPassword;
+
                 using (SHA256 sha256 = SHA256.Create())
                 {
-                    byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(UserPassword.ToLower().Trim()));
-
-                    // Convert the byte array to a lowercase hexadecimal string
-                    return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+                    byte[] hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(userPassword.ToLower().Trim()));
+                    return HashPrefix + BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
                 }
             }
 
@@ -80,10 +80,7 @@ namespace MyDVLD_BusinessTier
             /// <param name="UserID">User Id To Find User In DB</param>
             /// <param name="Password">Given Password To Compare</param>
             /// <returns>If Hased Passwords Is Identical</returns>
-            public static bool CheckUserPasswordMatchHashed(int UserID, string Password)
-            {
-                return clsUsersManagement.Find(UserID).Password == HashPassword(Password.Trim().ToLower());
-            }
+            public static bool CheckUserPasswordMatchHashed(int UserID, string Password) => clsUsersManagement.Find(UserID).Password == HashPassword(Password.Trim().ToLower());
 
             /// <summary>
             /// Encrypt Data Given With Provided Key
@@ -94,7 +91,6 @@ namespace MyDVLD_BusinessTier
             {
                 using (Aes aesAlg = Aes.Create())
                 {
-                    //Enc Key Is 128 Bit Cause Key Is From 16 Letter...
                     aesAlg.Key = Encoding.UTF8.GetBytes(ConfigurationManager.AppSettings["EncryptionKey"].ToString());
                     aesAlg.IV = new byte[aesAlg.BlockSize / 8];
 
@@ -121,7 +117,6 @@ namespace MyDVLD_BusinessTier
             {
                 using (Aes aesAlg = Aes.Create())
                 {
-                    //Enc Key Is 128 Bit Cause Key Is From 16 Letter...
                     aesAlg.Key = Encoding.UTF8.GetBytes(ConfigurationManager.AppSettings["EncryptionKey"].ToString());
                     aesAlg.IV = new byte[aesAlg.BlockSize / 8];
 

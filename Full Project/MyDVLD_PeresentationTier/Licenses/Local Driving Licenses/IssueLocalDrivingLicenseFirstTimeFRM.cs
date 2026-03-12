@@ -61,8 +61,7 @@ namespace MyDVLD_PeresentationTier.Licenses
                 _NewDriver.Person = ctrlShowLocalApplicationDetails1.LocalInfoCard.ApplicantPerson;
                 _NewDriver.CreatedByUserID = ctrlShowLocalApplicationDetails1.LocalInfoCard.CreatedByUser.UserID;
 
-                if (_NewDriver.Save())
-                    _LogDriverInfoWhileDebugging();
+                _NewDriver.Save();
             }
             else
                 _NewDriver = clsDriversManagement.FindByPersonID(ctrlShowLocalApplicationDetails1.LocalInfoCard.ApplicantPerson.PersonID);

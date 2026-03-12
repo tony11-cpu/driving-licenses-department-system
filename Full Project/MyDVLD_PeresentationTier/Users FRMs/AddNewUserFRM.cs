@@ -78,7 +78,8 @@ namespace MyDVLD_PeresentationTier.Users_FRMs
 
         private void tbUsername_Validating(object sender, CancelEventArgs e)
         {
-            if (string.IsNullOrEmpty(tbUsername.Text) || (clsUsersManagement.IsUserExists(tbUsername.Text.Trim()) && (NewUser.Mode == clsUsersManagement.UserMode.AddNew)))
+            if (string.IsNullOrEmpty(tbUsername.Text) || (clsUsersManagement.IsUserExists(tbUsername.Text.Trim()) 
+                                                      && (NewUser.Mode == clsUsersManagement.UserMode.AddNew)))
             {
                 e.Cancel = true;
                 errorProvider1.SetError(tbUsername, "Please Make Sure To Enter Username And It Must Be Not Existed Before!");
@@ -104,9 +105,10 @@ namespace MyDVLD_PeresentationTier.Users_FRMs
 
         private void tbPassword_Validating(object sender, CancelEventArgs e)
         {
-            if (string.IsNullOrEmpty(tbPassword.Text)
+            if ((string.IsNullOrEmpty(tbPassword.Text)
                 || tbPassword.Text.Length < 8
-                || !tbPassword.Text.All(Char.IsLetterOrDigit))
+                || !tbPassword.Text.All(Char.IsLetterOrDigit)
+                && tbPassword.Enabled))
             {
                 e.Cancel = true;
                 errorProvider1.SetError(tbPassword, "Please Make Sure The Password Does Not Contain Special Chars And It Must Be 8 (Letters/Numbers) Or More!");

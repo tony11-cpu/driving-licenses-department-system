@@ -512,7 +512,7 @@
             this.lblUserId.AutoSize = true;
             this.lblUserId.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblUserId.ForeColor = System.Drawing.Color.Aqua;
-            this.lblUserId.Location = new System.Drawing.Point(237, 140);
+            this.lblUserId.Location = new System.Drawing.Point(274, 140);
             this.lblUserId.Name = "lblUserId";
             this.lblUserId.Size = new System.Drawing.Size(75, 37);
             this.lblUserId.TabIndex = 8;
@@ -525,9 +525,9 @@
             this.label2.ForeColor = System.Drawing.Color.Aqua;
             this.label2.Location = new System.Drawing.Point(96, 140);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(126, 37);
+            this.label2.Size = new System.Drawing.Size(172, 37);
             this.label2.TabIndex = 7;
-            this.label2.Text = "UserId:";
+            this.label2.Text = "Person Id:";
             // 
             // lblAddOrUpdateuserInpute
             // 
