@@ -18,6 +18,7 @@ Before proceeding, the system checks:
 	2.	The applicant has no existing active application in progress
 	3.	The applicant meets the minimum age requirement for that license class
 
+
 Only then does the applicant proceed through 3 sequential tests:
 	1.	Vision Test
 	2.	Written Test
@@ -30,7 +31,8 @@ Most apps stop at password hashing. DVLD doesn’t:
 	∙	The Windows Registry handles session and login state management
 	∙	The registry-stored password is protected with asymmetric cryptography, keeping credentials secure even at the OS level
 
-## Pure ADO.NET — No Training Wheels
+
+## Pure ADO.NET
 No Entity Framework, no shortcuts:
 	∙	Every database call is handwritten using ADO.NET
 	∙	All operations go through stored procedures
