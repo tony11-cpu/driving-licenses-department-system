@@ -15,9 +15,9 @@
 First License Issuance — The Heart of the System
 The most intricate part of DVLD is not the tests themselves, but the entire first license issuance workflow. 
 Before proceeding, the system checks:
-. The applicant does not already hold an active license of the same category
-. The applicant has no existing active application in progress
-. The applicant meets the minimum age requirement for that license class
+1) The applicant does not already hold an active license of the same category
+2) The applicant has no existing active application in progress
+3) The applicant meets the minimum age requirement for that license class
 
 
 Only then does the applicant proceed through 3 sequential tests:
