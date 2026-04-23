@@ -1,246 +1,207 @@
-# DVLD — Driving License Management System 🚗
+# 🚗 DVLD — Driving License Management System
 
-A **PRODUCTION-GRADE, ENTERPRISE-READY** three-tier Windows desktop application that manages the **COMPLETE driving license lifecycle** — from initial application through test scheduling 📅, pass/fail tracking ✅❌, and license issuance 🪪. Built with pure ADO.NET 💉, stored procedures 📦, and a layered architecture that screams real-world software engineering excellence. 💪🔥
+A production-grade, three-tier Windows desktop application that manages the complete driving license lifecycle — from initial application through test scheduling, pass/fail tracking, and automatic license issuance.
 
----
-
-## 🎯 Overview — What Is This Thing?! 🤔
-
-DVLD is NOT just another CRUD app you throw together in a weekend. This is a **FULLY FLEDGED WORKFLOW ENGINE** 🔥 that enforces regulatory business rules at EVERY level. We're talking serious government-level stuff here:
-
-- ❌ Applicants CANNOT hold duplicate licenses (the system KNOWS if you already have one!)
-- 👁️📝🚗 Must pass THREE sequential tests (vision → written → road)
-- 📅 MUST meet age requirements before applying
-- 📊 Full audit trail, attempt counting, automatic license generation
-- 🛡️ Security that goes way beyond basic password hashing
-  
----
-
-## ✨ Key Features That Make This PROJECT ROCK 🌟
-
-| 🔥 FEATURE | 💡 WHY IT MATTERS |
-|-----------|-------------------|
-| 🔐 **First License Issuance Workflow** | Multi-stage validation + test sequencing + AUTO license generation — THIS IS THE HEART OF THE SYSTEM 💓 |
-| 📋 **Test Management** | Vision 👁️, Written ✍️, Street 🚗 tests tracked INDEPENDENTLY with attempt counting, retake costs & full history |
-| 🪪 **License Operations** | Renewal 🔄, Replacement (lost/damaged) 🔁, International License 🌍 |
-| 👤 **Driver & Vehicle Management** | Full driver records with license class associations + detainment tracking ⛔ |
-| 🔒 **Enterprise Security** | Password hashing 🔐 + Windows Registry session management with asymmetric cryptography 🛡️🛡️ |
-| 🔄 **Status State Machine** | New 🆕 → Pending ⏳ → Cancelled ❌ → Completed 🎉 with ENFORCED transitions |
+Built with C#, WinForms, pure ADO.NET, and stored procedures across a clean layered architecture.
 
 ---
 
-## 🛠️ Tech Stack — The Tools That Built This Beast 🔧
+## 🎯 Overview
 
-| 🔧 TECH | 📱 WHAT IT IS |
-|---------|---------------|
-| 🖥️ **C#** | Language — .NET Framework 4.8 (classic enterprise power 💪) |
-| 🖼️ **WinForms** | UI Layer — Raw Windows desktop power, not React, not Angular — pure desktop! 💻 |
-| 🗄️ **SQL Server** | Database — Enterprise-grade relational storage (this isn't SQLite! 🗄️) |
-| ⚙️ **ADO.NET** | Data Access — PURE handwritten queries, NO Entity Framework, NO Dapper, NO ORMs! 🚫 |
-| 🏗️ **Three-Tier Architecture** | Presentation → Business Logic → Data — Clean boundaries, no messy code! 🎯 |
+DVLD is a fully fledged workflow engine that enforces real regulatory business rules at every level:
+
+- ❌ Applicants cannot hold duplicate licenses of the same class
+- 👁️ ✍️ 🚗 Licenses require passing three sequential tests: vision → written → road
+- 📅 Age requirements are validated before any application is accepted
+- 📊 Full audit trail with attempt counting and automatic license generation
+- 🔒 Enterprise-grade security with asymmetric cryptography session management
 
 ---
 
-## 🏗️ Architecture — How It's Built (THE RIGHT WAY) 🧱
+## ✨ Key Features
 
-### Three-Tier Structure
+| Feature | Description |
+|---|---|
+| 🪪 First License Issuance Workflow | Multi-stage validation + test sequencing + automatic license generation |
+| 📋 Test Management | Vision, written, and street tests tracked independently with attempt history and retake fees |
+| 🔄 License Operations | Renewal, replacement (lost/damaged), and international license issuance |
+| 👤 Driver & Vehicle Management | Full driver records with license class associations and detainment tracking |
+| 🔐 Enterprise Security | Password hashing + Windows Registry session management with asymmetric cryptography |
+| ⚙️ Status State Machine | New → Pending → Cancelled → Completed with enforced transitions |
 
-```
-+-----------------------------------------------------------+
-|  PRESENTATION TIER (WinForms UI)                            |
-|    User Interaction + Controls          |
-+-----------------------+-------------------------------------+
-                        v
-+-----------------------------------------------------------+
-|  BUSINESS LOGIC TIER                                    |
-|    Domain Logic + Rules + Workflow + Validation               |
-+-----------------------+-------------------------------+
-                        v
-+-------------------------------------------------------+
-|  DATA ACCESS TIER (ADO.NET + Stored Procs)              |
-|    Pure SQL Connections + Database                        |
-+-------------------------------------------------------+
-```
+---
 
-Each layer talks ONLY to the layer BELOW. No cross-layer pollution. Clean boundaries. Separation of concerns. 🎯
+## 🛠️ Tech Stack
 
-### 🔑 DESIGN PATTERNS USED (Proves You Know Your Stuff) 📚
+| Technology | Role |
+|---|---|
+| C# / .NET Framework 4.8 | Primary language |
+| WinForms | Desktop UI layer |
+| SQL Server | Relational database (Express or higher) |
+| ADO.NET | Data access — handwritten parameterized queries, no ORM |
+| Three-Tier Architecture | Presentation → Business Logic → Data |
 
-| 🎨 PATTERN | ⚒️ WHERE it's used |
-|-----------|-------------------|
-| 📦 **Repository** | Data tier classes encapsulate ALL database access (`clsUsersManagmentDataTier`, `clsLicenseDataTier`, `clsApplicationsDataTier`) |
-| 🏭 **Factory** | Static `Find()` methods instantiate domain objects from database rows (elegant!) |
-| 📒 **Active Record** | Business classes (`clsLicenseManagement`, `clsLocalLicesnseApplicationManagement`) combine data + behavior |
-| 🔁 **State Machine** | Application status transitions enforced in BUSINESS LAYER — no illegal states allowed! |
-| ⚡ **Transaction Script** | License issuance orchestrates MULTIPLE database writes across tables atomically |
+### 💡 Why Pure ADO.NET?
 
-### WHY PURE ADO.NET?! 💡 (THIS MATTERS)
-
-Most developers reach for Entity Framework because they've NEVER written raw SQL and it TERRIFIES them 😱. This project takes the HARD PATH (and it makes you better):
+This project deliberately avoids Entity Framework and ORMs in favor of direct ADO.NET:
 
 - 🎯 Total control over query execution plans
-- 🛡️ SQL injection protection via parameterized queries (BUILT-IN)
-- 📤 Direct access to output parameters and return values
-- 👁️ COMPLETE visibility into every database call
-- 🚀 Performance you can MEASURE and OPTIMIZE
+- 🛡️ SQL injection protection via parameterized queries
+- 📤 Direct access to output parameters and stored procedure return values
+- 👁️ Complete visibility into every database call
+- 🚀 Performance that can be measured and optimized per query
 
 ---
 
-## The First License Issuance Flow - THE CROWN JEWEL
-
-THIS is the piece that makes this project SPECIAL. This is what you talk about in interviews. This is what makes hiring managers say "WOW".
+## 🏗️ Architecture
 
 ```
-+-----------------------------------------------------------+
-|  STEP 1: VALIDATE PREREQUISITES                           |
-|  +-----------------------------------------------------+  |
-|  | No active license of same class already?              |  |
-|  | No pending application in system?                 |  |
-|  | Age requirement met for selected license class?   |  |
-|  +-----------------------------------------------------+  |
-+-----------------------------------------------------------+
-|  STEP 2: VISION TEST                                     |
-|  +-----------------------------------------------------+  |
-|  | Schedule appointment (find available slot)      |  |
-|  | Record result (Pass/Fail)                 |  |
-|  | Track number of attempts + fees per attempt   |  |
-|  | Can retake as many times as needed           |  |
-|  +-----------------------------------------------------+  |
-+-----------------------------------------------------------+
-|  STEP 3: WRITTEN TEST                                   |
-|  +-----------------------------------------------------+  |
-|  | CAN ONLY TAKE AFTER VISION TEST PASSES        |  |
-|  | Full history preserved forever            |  |
-|  | Retake fees configured per test type       |  |
-|  +-----------------------------------------------------+  |
-+-----------------------------------------------------------+
-|  STEP 4: STREET/DRIVING TEST                           |
-|  +-----------------------------------------------------+  |
-|  | CAN ONLY TAKE AFTER WRITTEN TEST PASSES     |  |
-|  | Final gate before license gets issued       |  |
-|  | Full retake policy + fees                 |  |
-|  +-----------------------------------------------------+  |
-+-----------------------------------------------------------+
-|  STEP 5: LICENSE ISSUANCE                             |
-|  +-----------------------------------------------------+  |
-|  | ALL 3 TESTS PASSED -> LICENSE ISSUED!       |  |
-|  | Automatic expiration date based on class  |  |
-|  | Unique license number generated           |  |
-|  | Driver record automatically updated     |  |
-|  | Fee calculated + payment recorded       |  |
-|  +-----------------------------------------------------+  |
-+-----------------------------------------------------------+
+┌─────────────────────────────────────────┐
+│         PRESENTATION TIER               │
+│         WinForms UI Layer               │
+└──────────────────┬──────────────────────┘
+                   │
+┌──────────────────▼──────────────────────┐
+│         BUSINESS LOGIC TIER             │
+│   Domain Logic · Rules · Validation     │
+└──────────────────┬──────────────────────┘
+                   │
+┌──────────────────▼──────────────────────┐
+│           DATA ACCESS TIER              │
+│     ADO.NET · Stored Procedures         │
+└─────────────────────────────────────────┘
 ```
 
-**EACH TEST independently tracks:**
-- 📊 Number of attempts (no cheating the system!)
-- ✅❌ Pass/Fail result recorded
-- 💰 Retake fees (tracked PER attempt!)
-- 📝 Full history (BEFORE YOU — everything logged)
+Each layer communicates only with the layer directly below it. No cross-layer dependencies.
 
-THIS IS A STATE MACHINE IN ACTION. You cannot skip steps. You cannot bypass gates. The SYSTEM ENFORCES THE PROCESS.
+### 📐 Design Patterns
+
+| Pattern | Usage |
+|---|---|
+| 📦 Repository | Data tier classes encapsulate all database access (`clsUsersManagmentDataTier`, `clsLicenseDataTier`, `clsApplicationsDataTier`) |
+| 🏭 Factory | Static `Find()` methods instantiate domain objects from database rows |
+| 📒 Active Record | Business classes combine data and behavior (`clsLicenseManagement`, `clsLocalLicenseApplicationManagement`) |
+| 🔁 State Machine | Application status transitions enforced in the business layer — no illegal states permitted |
+| ⚡ Transaction Script | License issuance orchestrates multiple database writes atomically |
 
 ---
 
-## 🔄 System Flow — User Journey Through The App 👣
+## 🪪 The First License Issuance Flow
+
+This is the core of the system. It enforces a strict, non-skippable workflow:
 
 ```
-👤 LOGIN → 🏠 MAIN DASHBOARD
-          ↓
-     👥 PEOPLE MANAGEMENT (Add/Edit Drivers) 👨‍🚒
-          ↓
-     📝 LOCAL DRIVING LICENSE APPLICATION
-          ↓
-     📅 TEST APPOINTMENTS (Vision → Written → Street) 📊
-          ↓
-     ✏️ TEST RESULTS RECORDING ✅❌
-          ↓
-     🪪 LICENSE ISSUED AUTOMATICALLY 🎉 (when all tests pass!)
-          ↓
-     ⚙️ LICENSE OPERATIONS (Renew 🔄, Replace 🔁, Detain ⛔, International 🌍)
+STEP 1 — Validate Prerequisites
+  ├── No active license of same class exists
+  ├── No pending application already in system
+  └── Age requirement met for selected license class
+
+STEP 2 — Vision Test
+  ├── Schedule appointment
+  ├── Record pass/fail result
+  └── Track attempts and fees per attempt
+
+STEP 3 — Written Test
+  ├── Only accessible after vision test passes
+  ├── Full history preserved
+  └── Retake fees configured per test type
+
+STEP 4 — Street/Driving Test
+  ├── Only accessible after written test passes
+  ├── Final gate before license issuance
+  └── Full retake policy and fee tracking
+
+STEP 5 — License Issuance (automatic)
+  ├── Triggered when all 3 tests pass
+  ├── Expiration date calculated by license class
+  ├── Unique license number generated
+  ├── Driver record updated
+  └── Fee calculated and payment recorded
 ```
 
----
-
-## ⚡ SETUP & INSTALLATION — GET IT RUNNING! 🔥🔥🔥
-
-### ⚡ PREREQUISITES — What You NEED First
-
-| 📦 THING | 📋 VERSION |
-|---------|------------|
-| 🖥️ **Visual Studio** | 2019 or higher |
-| 📚 **.NET Framework** | 4.8 |
-| 🗄️ **SQL Server** | Express or higher |
-
-### 📝 STEP BY STEP (Get it running in 5 minutes!)
-
-1. 📥 **Clone the repository** to your machine ⬇️
-2. 🗄️ **Open SQL Server** → Restore `.bak` file from `Database/DVLD_DB_Backup`
-3. 🏷️ **Name your database**: `DVLD_02` ← ⚠️ MUST BE EXACT! (case matters!)
-4. 📂 **Open solution** in Visual Studio (`MyDVLD_Project0.sln`)
-5. 🔨 **Build in THIS ORDER** (or you'll get dependency errors!):
-   - `MyDVLD_DataTier` 🏗️ (foundation first!)
-   - `MyDVLD_BusinessTier` 🏗️
-   - `MyDVLD_PeresentationTier` 🏗️
-   - `MyDVLD_Project0` 🏗️ (entry point last!)
-6. ▶️ **Run `MyDVLD_Project0`** and watch it FLY! 🚀
-
-### 🔑 DEFAULT LOGIN CREDENTIALS
-
-On FIRST LAUNCH 🆕, app prompts you to set up credentials automatically. Use this pre-configured admin account:
-
-| 🎫 FIELD | 💎 VALUE |
-|---------|---------|
-| 👤 **Username** | `Admin_1` |
-| 🔐 **Password** | `123123123` |
+Each test independently tracks: attempt count, pass/fail result, retake fees per attempt, and complete history. Steps cannot be skipped or bypassed — the system enforces the process.
 
 ---
 
-## 💻 USAGE GUIDE — HOW TO USE THE SYSTEM 📖
+## ⚡ Setup & Installation
 
-| 🎬 ACTION | 🛤️ HOW TO DO IT |
-|---------|----------------|
-| 🆕 **Add New Driver** | People → Add New Person → Create User Account |
-| 📝 **Apply for License** | Local Driving License App → New Application → Select License Class → Schedule Tests |
-| ✏️ **Record Test Result** | Test Appointments → Take Test → Enter Pass/Fail |
-| 🪪 **Get License** | IT'S AUTOMATIC when all 3 tests pass! 🎉 (no manual work needed!) |
-| 🔄 **Renew License** | Licenses → Renew → New expiration calculated + new fees |
-| 🔁 **Replace License** | Licenses → Replace (Lost/Damaged) → New license number generated |
-| ⛔ **Detain License** | Detain License → Enter fine → License marked as blocked |
-| 🌍 **International License** | International Driving License App for traveling abroad |
+### 📋 Prerequisites
+
+| Requirement | Version |
+|---|---|
+| Visual Studio | 2019 or higher |
+| .NET Framework | 4.8 |
+| SQL Server | Express or higher |
+
+### 🔧 Steps
+
+1. Clone the repository
+2. Open SQL Server and restore the `.bak` file from `Database/DVLD_DB_Backup`
+3. Name the database exactly `DVLD_02` (case-sensitive)
+4. Open `MyDVLD_Project0.sln` in Visual Studio
+5. Build projects in this order to resolve dependencies:
+   - `MyDVLD_DataTier`
+   - `MyDVLD_BusinessTier`
+   - `MyDVLD_PeresentationTier`
+   - `MyDVLD_Project0`
+6. Run `MyDVLD_Project0`
+
+### 🔑 Default Login
+
+On first launch, the app prompts to set up credentials automatically. A pre-configured admin account is available:
+
+| Field | Value |
+|---|---|
+| Username | `Admin_1` |
+| Password | `123123123` |
 
 ---
 
-## 🚀 FUTURE IMPROVEMENTS — What's Next On The Roadmap 🗺️
+## 💻 Usage Guide
 
-| 🔮 IMPROVEMENT | ⭐ WHY IT MATTERS |
-|---------------|-------------------|
-| 🌐 **ASP.NET Core Web API** | Multi-user access via web + mobile apps |
-| 📋 **Audit Logging** | Regulatory compliance + accountability |
-| 🆔 **Government ID APIs** | Auto-verify identity documents instantly |
-| 📸 **Biometric Capture** | Fingerprint + photo for secure identification |
+| Action | How |
+|---|---|
+| Add new driver | People → Add New Person → Create User Account |
+| Apply for license | Local Driving License App → New Application → Select License Class → Schedule Tests |
+| Record test result | Test Appointments → Take Test → Enter Pass/Fail |
+| Issue license | Automatic when all 3 tests pass |
+| Renew license | Licenses → Renew → New expiration and fees calculated |
+| Replace license | Licenses → Replace (Lost/Damaged) → New license number generated |
+| Detain license | Detain License → Enter fine → License marked as blocked |
+| International license | International Driving License App |
 
 ---
 
-## 📁 PROJECT STRUCTURE — Where Everything LIVES 📂
+## 📁 Project Structure
 
 ```
 Full Project/
-├── 📁 MyDVLD_Project0/              🎯 Entry point + main form
-├── 📁 MyDVLD_PeresentationTier/       🖼️ WinForms UI (users, licenses, tests, people)
-├── 📁 MyDVLD_BusinessTier/             💼 Domain logic + validation + rules
-├── 📁 MyDVLD_DataTier/                ⚙️ ADO.NET connections + stored procedures  
-└── 📁 Database/                       🗄️ SQL Server backup file (.bak)
+├── MyDVLD_Project0/            # Entry point and main form
+├── MyDVLD_PeresentationTier/   # WinForms UI (users, licenses, tests, people)
+├── MyDVLD_BusinessTier/        # Domain logic, validation, and rules
+├── MyDVLD_DataTier/            # ADO.NET connections and stored procedures
+└── Database/                   # SQL Server backup file (.bak)
 ```
 
 ---
 
-## 🎓 WHAT THIS PROJECT PROVES 💼
+## 🗺️ Roadmap
 
-> - ✅ Three-tier architecture with CLEAN separation of concerns
-> - ✅ Complex WORKFLOW ORCHESTRATION (license issuance flow)
-> - ✅ STATE MACHINE thinking (application statuses + transitions)
-> - ✅ RAW ADO.NET MASTERY (no ORM crutches!)
-> - ✅ Real-world BUSINESS RULE enforcement (regulatory compliance)
-> - ✅ FULL-STACK thinking (SQL to UI, end-to-end)
-> - ✅ Enterprise thinking (security, audit, validation)
+| Improvement | Purpose |
+|---|---|
+| ASP.NET Core Web API | Enable multi-user access via web and mobile |
+| Audit Logging | Regulatory compliance and accountability |
+| Government ID API Integration | Automated identity document verification |
+| Biometric Capture | Fingerprint and photo for secure identification |
+
+---
+
+## 🎓 What This Project Demonstrates
+
+- ✅ Three-tier architecture with clean separation of concerns
+- ✅ Complex workflow orchestration across the license issuance flow
+- ✅ State machine design enforcing application status transitions
+- ✅ Raw ADO.NET mastery without ORM abstractions
+- ✅ Real-world business rule enforcement simulating regulatory compliance
+- ✅ End-to-end full-stack thinking from SQL to UI
+- ✅ Enterprise-level security, audit trails, and validation
